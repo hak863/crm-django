@@ -1,17 +1,29 @@
-from django.shortcuts import render, redirect
+from django.core.mail import send_mail
+from django.shortcuts import render, redirect, reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.views.generic import TemplateView, ListView
+from django.views import generic
 from .models import Lead, Agent
-from .forms import LeadForm, LeadModelForm
+from .forms import LeadForm, LeadModelForm, CustomUserCreationForm
+
+#CRUD
+
+class SignupView(generic.CreateView): #Class based view for the create view
+    template_name = "registration/signup.html"
+    form_class = CustomUserCreationForm
+
+    def get_success_url(self):
+        return reverse("login")
 
 
-class LandingPageView(TemplateView): #TemplateView is a class based view
+
+class LandingPageView(generic.TemplateView): #TemplateView is a class based view
     template_name = "landing.html"
 
 def landing_page(request): #request is the request object
     return render(request, "landing.html")
 
-class LeadListView(ListView):
+class LeadListView(LoginRequiredMixin, generic.ListView): #Class based view for the List view
     template_name = "leads/lead_list.html"
     queryset = Lead.objects.all()
     context_object_name = "leads" #this is the name of the queryset in the template
@@ -23,12 +35,34 @@ def lead_list(request):
     } #dictionary
     return render(request, "leads/lead_list.html",context) #rendering the template
 
+class LeadDetailView(LoginRequiredMixin, generic.DetailView): #class based view for the detail view
+    template_name = "leads/lead_detail.html"
+    queryset = Lead.objects.all() #Used to filter the models
+    context_object_name = "lead"
+
 def lead_detail(request, pk): #pk is primary key to identify the lead in the database and open the detailed view of the lead
     lead = Lead.objects.get(id=pk)
     context = {
         "lead": lead
     }
     return render(request, "leads/lead_detail.html", context)
+
+class LeadCreateView(LoginRequiredMixin, generic.CreateView): #Class based view for the create view
+    template_name = "leads/lead_create.html"
+    form_class = LeadModelForm
+    
+    def get_success_url(self):
+        return reverse("leads:lead-list") #to dynamically get the lead list url
+    
+    def form_valid(self, form): #To send mail 
+        # TODO send email
+        send_mail(
+            subject="A lead has been created",
+            message="Go to the site to see the new lead",
+            from_email="test@test.com",
+            recipient_list=["test2@test.com"]
+        )
+        return super(LeadCreateView, self).form_valid(form)
 
 def lead_create(request):
     form = LeadModelForm()
@@ -40,8 +74,16 @@ def lead_create(request):
     context = {
         "form" : form
     }
-    return render(request, "leads/lead_create.html",context)  
+    return render(request, "leads/lead_create.html",context)
 
+class LeadUpdateView(LoginRequiredMixin, generic.UpdateView): #Class based view for the create view
+    template_name = "leads/lead_update.html"
+    queryset = Lead.objects.all()
+    form_class = LeadModelForm
+    
+    def get_success_url(self):
+        return reverse("leads:lead-list")
+    
 def lead_update(request, pk):
     lead = Lead.objects.get(id=pk)
     form = LeadModelForm(instance=lead)
@@ -56,6 +98,13 @@ def lead_update(request, pk):
     }
     return render(request, "leads/lead_update.html",context)
 
+class LeadDeleteView(LoginRequiredMixin, generic.DeleteView): #Class based view for the delete view
+    template_name = "leads/lead_delete.html"
+    queryset = Lead.objects.all()
+    
+    def get_success_url(self):
+        return reverse("leads:lead-list")
+    
 def lead_delete(request, pk):
     lead = Lead.objects.get(id=pk)
     lead.delete() #this will delete the lead from the database
