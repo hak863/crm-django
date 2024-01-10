@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.views import generic
 from .models import Lead, Agent
 from .forms import LeadForm, LeadModelForm, CustomUserCreationForm
+from agents.mixins import OrganiserAndLoginRequiredMixin
 
 #CRUD
 
@@ -28,6 +29,17 @@ class LeadListView(LoginRequiredMixin, generic.ListView): #Class based view for 
     queryset = Lead.objects.all()
     context_object_name = "leads" #this is the name of the queryset in the template
 
+    def get_queryset(self):
+        user = self.request.user
+        #initial queryset of leads for the entire organisation
+        if user.is_organiser:
+            queryset = Lead.objects.filter()
+        else:
+            queryset = Lead.objects.filter()
+            #filter for the agent that is logged in
+            queryset = queryset.filter(agent__user=user)
+        return queryset
+
 def lead_list(request):
     leads=Lead.objects.all() #queryset
     context = {
@@ -37,8 +49,18 @@ def lead_list(request):
 
 class LeadDetailView(LoginRequiredMixin, generic.DetailView): #class based view for the detail view
     template_name = "leads/lead_detail.html"
-    queryset = Lead.objects.all() #Used to filter the models
     context_object_name = "lead"
+
+    def get_queryset(self):
+        user = self.request.user
+        #initial queryset of leads for the entire organisation
+        if user.is_organiser:
+            queryset = Lead.objects.filter()
+        else:
+            queryset = Lead.objects.filter(organisation=user.agent.organisation)
+            #filter for the agent that is logged in
+            queryset = queryset.filter(agent__user=user)
+        return queryset
 
 def lead_detail(request, pk): #pk is primary key to identify the lead in the database and open the detailed view of the lead
     lead = Lead.objects.get(id=pk)
@@ -47,7 +69,7 @@ def lead_detail(request, pk): #pk is primary key to identify the lead in the dat
     }
     return render(request, "leads/lead_detail.html", context)
 
-class LeadCreateView(LoginRequiredMixin, generic.CreateView): #Class based view for the create view
+class LeadCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView): #Class based view for the create view
     template_name = "leads/lead_create.html"
     form_class = LeadModelForm
     
@@ -62,7 +84,7 @@ class LeadCreateView(LoginRequiredMixin, generic.CreateView): #Class based view 
             from_email="test@test.com",
             recipient_list=["test2@test.com"]
         )
-        return super(LeadCreateView, self).form_valid(form)
+        return super(OrganiserAndLoginRequiredMixin, self).form_valid(form)
 
 def lead_create(request):
     form = LeadModelForm()
@@ -76,13 +98,16 @@ def lead_create(request):
     }
     return render(request, "leads/lead_create.html",context)
 
-class LeadUpdateView(LoginRequiredMixin, generic.UpdateView): #Class based view for the create view
+class LeadUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView): #Class based view for the create view
     template_name = "leads/lead_update.html"
-    queryset = Lead.objects.all()
     form_class = LeadModelForm
     
     def get_success_url(self):
         return reverse("leads:lead-list")
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Lead.objects.filter()
     
 def lead_update(request, pk):
     lead = Lead.objects.get(id=pk)
@@ -98,12 +123,16 @@ def lead_update(request, pk):
     }
     return render(request, "leads/lead_update.html",context)
 
-class LeadDeleteView(LoginRequiredMixin, generic.DeleteView): #Class based view for the delete view
+class LeadDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView): #Class based view for the delete view
     template_name = "leads/lead_delete.html"
     queryset = Lead.objects.all()
     
     def get_success_url(self):
         return reverse("leads:lead-list")
+    
+    def get_queryset(self):
+        user = self.request.user
+        return Lead.objects.filter()
     
 def lead_delete(request, pk):
     lead = Lead.objects.get(id=pk)
