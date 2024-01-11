@@ -1,7 +1,5 @@
 # crm-django
 
-# CRM Prototype
-
 This is a prototype of a Contact Relationship Management (CRM) system. The system is designed to help manage contacts, opportunities, and various aspects of customer interactions.
 
 ## Features
