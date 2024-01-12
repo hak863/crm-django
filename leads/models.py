@@ -1,17 +1,18 @@
 from django.db import models
-from django.db.models.signals import post_save
-from django.contrib.auth.models import AbstractUser
+from django.db.models.signals import post_save #this is the post save signal that is sent when a user is created
+from django.contrib.auth.models import AbstractUser #this is the abstract user model
 
-class User(AbstractUser):
+
+class User(AbstractUser): #this is the user model
     is_organiser = models.BooleanField(default=True) # this is the default value for the field is_organiser
     is_agent = models.BooleanField(default=False) # this is the default value for the field is_agent
 
-class UserProfile(models.Model):
+class UserProfile(models.Model): #this is the userprofile model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.user.username
     
-class Lead(models.Model):
+class Lead(models.Model): #this is the lead model
 
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
@@ -24,14 +25,14 @@ class Lead(models.Model):
 
 
 
-class Agent(models.Model):
+class Agent(models.Model): #this is the agent model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     organisation = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.email
 
-class Category(models.Model): #new, contracts, contacted, converted, unconverted
+class Category(models.Model): #new, contacted, converted, unconverted
     name=models.CharField(max_length=30)
 
 

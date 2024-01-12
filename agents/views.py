@@ -5,14 +5,14 @@ from .forms import AgentModelForm
 from .mixins import OrganiserAndLoginRequiredMixin
 from django.core.mail import send_mail
 
-class AgentListView(OrganiserAndLoginRequiredMixin, generic.ListView):
+class AgentListView(OrganiserAndLoginRequiredMixin, generic.ListView): #this is the agent list view that inherits from the list view class
     template_name = "agents/agent_list.html"
 
     def get_queryset(self):
         organisation = self.request.user.userprofile
         return Agent.objects.filter(organisation=organisation)
 
-class AgentCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView):
+class AgentCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView): #this is the agent create view that inherits from the create view class
     template_name = "agents/agent_create.html"
     form_class = AgentModelForm
 
@@ -37,7 +37,7 @@ class AgentCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView):
         )
         return super(AgentCreateView, self).form_valid(form)
     
-class AgentDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
+class AgentDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView): #this is the agent detail view that inherits from the detail view class
     template_name = "agents/agent_detail.html"
     context_object_name = "agent"
 
@@ -45,7 +45,7 @@ class AgentDetailView(OrganiserAndLoginRequiredMixin, generic.DetailView):
         organisation = self.request.user.userprofile
         return Agent.objects.filter(organisation=organisation)
     
-class AgentUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView):
+class AgentUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView): #this is the agent update view that inherits from the update view class
     template_name = "agents/agent_update.html"
     form_class = AgentModelForm
 
@@ -56,7 +56,7 @@ class AgentUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView):
         organisation = self.request.user.userprofile
         return Agent.objects.filter(organisation=organisation)
 
-class AgentDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView):
+class AgentDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView): #this is the agent delete view that inherits from the delete view class
     template_name = "agents/agent_delete.html"
     context_object_name = "agent"
 

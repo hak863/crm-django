@@ -2,12 +2,12 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import (
-    LoginView, 
-    LogoutView, 
-    PasswordResetView, 
-    PasswordResetDoneView,
-    PasswordResetConfirmView,
-    PasswordResetCompleteView
+    LoginView, #this is the login page
+    LogoutView, #this is the logout page
+    PasswordResetView, #this is the password reset page
+    PasswordResetDoneView, #this is the password reset done page
+    PasswordResetConfirmView, #this is the password reset confirm page
+    PasswordResetCompleteView #this is the password reset complete page
 )
 
 from django.urls import path, include

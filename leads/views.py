@@ -154,7 +154,7 @@ def lead_delete(request, pk):
     return redirect("/leads")
 
 
-class AssignAgentView(OrganiserAndLoginRequiredMixin, generic.FormView):
+class AssignAgentView(OrganiserAndLoginRequiredMixin, generic.FormView): #Class based view for the assign agent view
     template_name = "leads/assign_agent.html"
     form_class = AssignAgentForm
     
@@ -175,7 +175,7 @@ class AssignAgentView(OrganiserAndLoginRequiredMixin, generic.FormView):
         
         return super(AssignAgentView, self).form_valid(form)
 
-class CategoryListView(LoginRequiredMixin, generic.ListView):
+class CategoryListView(LoginRequiredMixin, generic.ListView): #Class based view for the category list view
     template_name = "leads/category_list.html"
     context_object_name = "category_list"
 
@@ -203,7 +203,7 @@ class CategoryListView(LoginRequiredMixin, generic.ListView):
         return queryset
 
 
-class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
+class CategoryDetailView(LoginRequiredMixin, generic.DetailView): #Class based view for the category detail view
     template_name = "leads/category_detail.html"
     context_object_name = "category"
   
@@ -216,7 +216,7 @@ class CategoryDetailView(LoginRequiredMixin, generic.DetailView):
             queryset = Lead.objects.filter()
         return queryset
 
-class LeadCategoryUpdateView(LoginRequiredMixin, generic.UpdateView):
+class LeadCategoryUpdateView(LoginRequiredMixin, generic.UpdateView): #Class based view for the lead category update view
     template_name = "leads/lead_category_update.html"
     form_class = LeadCategoryUpdateForm
     

@@ -11,6 +11,6 @@ import os
 
 from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hkcrm.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'hkcrm.settings') #points to hkcrm/settings.py
 
-application = get_asgi_application()
+application = get_asgi_application() #points to hkcrm/asgi.py

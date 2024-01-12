@@ -29,13 +29,13 @@ class AssignAgentForm(forms.Form):
 
     def __init__(self, *args, **kwargs):
         request = kwargs.pop("request") #this is the request object that is passed in the view
-        agents = Agent.objects.filter()
-        super(AssignAgentForm, self).__init__(*args, **kwargs)
-        self.fields["agent"].queryset = agents
+        agents = Agent.objects.filter() 
+        super(AssignAgentForm, self).__init__(*args, **kwargs) 
+        self.fields["agent"].queryset = agents 
 
-class LeadCategoryUpdateForm(forms.ModelForm):
-    class Meta:
+class LeadCategoryUpdateForm(forms.ModelForm): #this is the form for the category field in the lead model
+    class Meta: #this is the meta class for the LeadCategoryUpdateForm
         model = Lead
         fields = (
-            'category',
+            'category', #this is the field for the category
         )
