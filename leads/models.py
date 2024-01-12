@@ -19,6 +19,10 @@ class Lead(models.Model): #this is the lead model
     age = models.IntegerField(default=0)
     agent = models.ForeignKey("Agent", null=True, blank=True, on_delete=models.SET_NULL) #this is the foreign key for the agent model and it is set to null if the agent is deleted
     category = models.ForeignKey("Category", related_name="leads", null=True, blank=True, on_delete=models.SET_NULL) #this is the foreign key for the agent model and it is set to null if the agent is deleted
+    description = models.TextField() #this is the description field for the lead model currently it is a text field
+    date_added = models.DateTimeField(auto_now_add=True) #this is the date the lead was added to the database using the auto_now_add field which automatically adds the date the lead was added to the database
+    phone_number = models.CharField(max_length=20) #this is the phone number field for the lead model
+    email = models.EmailField() #this is the email field for the lead model
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

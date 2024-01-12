@@ -71,7 +71,7 @@ class LeadDetailView(LoginRequiredMixin, generic.DetailView): #class based view 
         if user.is_organiser:
             queryset = Lead.objects.filter()
         else:
-            queryset = Lead.objects.filter(organisation=user.agent.organisation)
+            queryset = Lead.objects.filter()
             #filter for the agent that is logged in
             queryset = queryset.filter(agent__user=user)
         return queryset

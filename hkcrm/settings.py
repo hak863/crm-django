@@ -37,6 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #these are the apps that we installed (third party apps)
+    'crispy_forms',
+    'crispy_tailwind',
+
+    #these are the apps that we created (local apps)
     'leads',
     'agents'
 ]
@@ -128,4 +134,9 @@ STATIC_ROOT= "static_root" #this is where the static files are collected to
 AUTH_USER_MODEL = "leads.User"  #points to leads/models.py
 EMAIL_BACKEND= "django.core.mail.backends.console.EmailBackend"  #this is for the email backend
 LOGIN_REDIRECT_URL = "/leads" #this is the url that the user is redirected to after login
-LOGIN_URL = "/login"   #this is the url that the user is redirected to if they are not logged in    
+LOGIN_URL = "/login"   #this is the url that the user is redirected to if they are not logged in   
+LOGOUT_REDIRECT_URL = "/"  #this is the url that the user is redirected to after logout directs to the landing page
+
+#these are the settings for crispy forms
+CRISPY_ALLOWED_TEMPLATE_PACKS= 'tailwind'
+CRISPY_TEMPLATE_PACK= 'tailwind'
