@@ -8,13 +8,14 @@
       <p class="lg:w-2/3 mx-auto leading-relaxed text-base">
          These categories segment the leads
       </p>
+      <a href="{% url 'leads:category-create' %}" class="hover:text-blue-500">Create a category</a>
     </div>
     <div class="lg:w-2/3 w-full mx-auto overflow-auto">
       <table class="table-auto w-full text-left whitespace-no-wrap">
         <thead>
           <tr>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Plan</th>
-            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Speed</th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100 rounded-tl rounded-bl">Category</th>
+            <th class="px-4 py-3 title-font tracking-wider font-medium text-gray-900 text-sm bg-gray-100">Count</th>
           </tr>
         </thead>
         <tbody>

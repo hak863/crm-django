@@ -7,27 +7,50 @@ class User(AbstractUser): #this is the user model
     is_organiser = models.BooleanField(default=True) # this is the default value for the field is_organiser
     is_agent = models.BooleanField(default=False) # this is the default value for the field is_agent
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.username
+
+class LeadManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset()
+
 class UserProfile(models.Model): #this is the userprofile model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     def __str__(self):
         return self.user.username
     
-class Lead(models.Model): #this is the lead model
-
+class Lead(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
     age = models.IntegerField(default=0)
-    agent = models.ForeignKey("Agent", null=True, blank=True, on_delete=models.SET_NULL) #this is the foreign key for the agent model and it is set to null if the agent is deleted
-    category = models.ForeignKey("Category", related_name="leads", null=True, blank=True, on_delete=models.SET_NULL) #this is the foreign key for the agent model and it is set to null if the agent is deleted
-    description = models.TextField() #this is the description field for the lead model currently it is a text field
-    date_added = models.DateTimeField(auto_now_add=True) #this is the date the lead was added to the database using the auto_now_add field which automatically adds the date the lead was added to the database
-    phone_number = models.CharField(max_length=20) #this is the phone number field for the lead model
-    email = models.EmailField() #this is the email field for the lead model
+    agent = models.ForeignKey("Agent", null=True, blank=True, on_delete=models.SET_NULL)
+    category = models.ForeignKey("Category", related_name="leads", null=True, blank=True, on_delete=models.SET_NULL)
+    description = models.TextField()
+    date_added = models.DateTimeField(auto_now_add=True)
+    phone_number = models.CharField(max_length=20)
+    email = models.EmailField()
+    # profile_picture = models.ImageField(null=True, blank=True, upload_to="profile_pictures/")
+    converted_date = models.DateTimeField(null=True, blank=True)
+
+    objects = LeadManager()
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+def handle_upload_follow_ups(instance, filename): #this is the function that handles the upload of the follow up files
+    return f"lead_followups/lead_{instance.lead.pk}/{filename}"
 
+class FollowUp(models.Model): #this is the follow up model for the leads app (crm-django/leads/models.py)
+    lead = models.ForeignKey(Lead, related_name="followups", on_delete=models.CASCADE)
+    date_added = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True, null=True)
+    file = models.FileField(null=True, blank=True, upload_to=handle_upload_follow_ups)
+
+    def __str__(self):
+        return f"{self.lead.first_name} {self.lead.last_name}"
 
 class Agent(models.Model): #this is the agent model
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -42,7 +65,6 @@ class Category(models.Model): #new, contacted, converted, unconverted
 
     def __str__(self):
         return self.name
-
 
 def post_user_created_signal(sender, instance, created, **kwargs):
     if created:
