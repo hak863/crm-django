@@ -33,6 +33,7 @@ Welcome to the Contact Management System (CRM) project! This system is designed 
 - **Lead Management:** Create, view, update, and delete leads. Organizes leads using categories.
 - **Category Management:** Organizes and categorizes leads using a category model.
 - **Assign Agent:** Allows assigning agents to leads for efficient management.
+- **Follow-up:** Enables tracking and scheduling follow-up activities for leads.
 
 ## Agents App
 

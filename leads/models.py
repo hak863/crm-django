@@ -17,11 +17,6 @@ class LeadManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset()
 
-class UserProfile(models.Model): #this is the userprofile model
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    def __str__(self):
-        return self.user.username
-    
 class Lead(models.Model):
     first_name = models.CharField(max_length=20)
     last_name = models.CharField(max_length=20)
