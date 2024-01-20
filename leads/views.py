@@ -20,9 +20,9 @@ from .forms import (
     FollowUpModelForm
 )
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
-#CRUD
+#CRUD + L  - Create, Retrieve, Update and Delete + List
 
 class SignupView(generic.CreateView): #Class based view for the create view
     template_name = "registration/signup.html"
@@ -140,13 +140,18 @@ class LeadCreateView(OrganiserAndLoginRequiredMixin, generic.CreateView): #Class
         return reverse("leads:lead-list") #to dynamically get the lead list url
     
     def form_valid(self, form): #To send mail 
-        # TODO send email
-        send_mail(
-            subject="A lead has been created",
-            message="Go to the site to see the new lead",
-            from_email="test@test.com",
-            recipient_list=["test2@test.com"]
-        )
+        if form.is_valid():
+            lead = form.save(commit=False)
+            lead.save()
+            messages.success(self.request, "You have successfully created a lead")
+            if lead.agent:  # Check if the lead is assigned to an agent
+                send_mail(
+                    subject="A lead has been created",
+                    message="Go to the site to see the new lead",
+                    from_email="admin@hkcrm.com",
+                    recipient_list=[lead.agent.user.email]
+                )
+                
         return super(OrganiserAndLoginRequiredMixin, self).form_valid(form)
 
 def lead_create(request):
@@ -222,6 +227,12 @@ class AssignAgentView(OrganiserAndLoginRequiredMixin, generic.FormView): #Class 
         lead = Lead.objects.get(id=self.kwargs["pk"])
         lead.agent = agent
         lead.save()
+        send_mail( #to send mail to the agent who has been assigned the lead
+                subject="A lead has been created",
+                message="Go to the site to see the new lead",
+                from_email="admin@hkcrm.com",
+                recipient_list=[lead.agent.user.email]
+                )
         return super(AssignAgentView, self).form_valid(form)
 
 class CategoryListView(LoginRequiredMixin, generic.ListView): #Class based view for the category list view
@@ -288,14 +299,10 @@ class CategoryUpdateView(OrganiserAndLoginRequiredMixin, generic.UpdateView): #C
     def get_queryset(self):
         user = self.request.user
         # initial queryset of leads for the entire organisation
-        if user.is_organisor:
-            queryset = Category.objects.filter(
-                organisation=user.userprofile
-            )
+        if user.is_organiser:
+            queryset = Category.objects.filter()
         else:
-            queryset = Category.objects.filter(
-                organisation=user.agent.organisation
-            )
+            queryset = Category.objects.filter()
         return queryset
 
 class CategoryDeleteView(OrganiserAndLoginRequiredMixin, generic.DeleteView): #Class based view for the category delete view
